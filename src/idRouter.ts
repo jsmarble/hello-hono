@@ -1,10 +1,7 @@
 import { verifyKey } from "@unkey/api";
 import { guidSchema, nameSchema } from "./schema";
-
 import { Bindings } from "./Bindings";
 import { Hono } from "hono";
-import { z } from "zod";
-import type { KVNamespace } from "@cloudflare/workers-types";
 
 const idRouter = new Hono<{ Bindings: Bindings }>();
 
