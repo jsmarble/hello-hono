@@ -55,7 +55,7 @@ app.get("/hello/:name", async (c) => {
   return c.text(`Hello ${name}!`);
 });
 
-app.post("/codename/:name/:uuid", (c) => {
+app.post("/codename/:name/:uuid", async (c) => {
   var uid = null;
   var uuid = guidSchema.safeParse(c.req.param("uuid"));
   if (uuid.success) {
@@ -74,7 +74,7 @@ app.post("/codename/:name/:uuid", (c) => {
     );
   }
 
-  c.env.NAMES_KV.put(uid, nameReq.data);
+  await c.env.NAMES_KV.put(uid, nameReq.data);
   return c.text(`I will remember you, ${nameReq.data}, as ${uid}!`);
 });
 
