@@ -26,6 +26,7 @@ idRouter.post("/:name/:uuid", async (c) => {
       500
     );
   }
+
   if (!v.result.valid) {
     return c.json(
       {

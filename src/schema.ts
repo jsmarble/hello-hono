@@ -9,3 +9,9 @@ export const nameSchema = z
   })
   .max(20, { message: "Name must be 20 or fewer characters long" })
   .min(2, { message: "Name must be 2 or more characters long" });
+
+export const profileSchema = z.object({
+  name: nameSchema,
+  email: z.string().email(),
+  id: guidSchema,
+});

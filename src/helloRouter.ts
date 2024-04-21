@@ -1,4 +1,3 @@
-import { verifyKey } from "@unkey/api";
 import { guidSchema, nameSchema } from "./schema";
 import { Bindings } from "./Bindings";
 import { Hono } from "hono";
