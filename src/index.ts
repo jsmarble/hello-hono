@@ -20,11 +20,11 @@ const nameSchema = z
   .min(2, { message: "Name must be 2 or more characters long" });
 
 app.get("/", (c) => {
-  return c.text("Hello world!");
+  return c.json({ message: "Hello world!" });
 });
 
 app.get("/hello", (c) => {
-  return c.text("Hello again!");
+  return c.json({ message: "Hello again!" });
 });
 
 app.get("/hello/:name", async (c) => {
@@ -34,7 +34,13 @@ app.get("/hello/:name", async (c) => {
     const uid = uuid.data;
     const n = await c.env.NAMES_KV.get(uid);
     if (n === null) {
-      return c.text(`I don't know who ${uid} is.`);
+      return c.json(
+        {
+          error: "User not found.",
+          uuid: uid,
+        },
+        404
+      );
     }
     name = n;
   }
@@ -53,10 +59,10 @@ app.get("/hello/:name", async (c) => {
     }
   }
 
-  return c.text(`Hello ${name}!`);
+  return c.json({ message: `Hello ${name}!` });
 });
 
-app.post("/codename/:name/:uuid", async (c) => {
+app.post("/id/:name/:uuid", async (c) => {
   let uid = null;
   const uuid = guidSchema.safeParse(c.req.param("uuid"));
   if (uuid.success) {
@@ -76,7 +82,11 @@ app.post("/codename/:name/:uuid", async (c) => {
   }
 
   await c.env.NAMES_KV.put(uid, nameReq.data);
-  return c.text(`I will remember you, ${nameReq.data}, as ${uid}!`);
+  return c.json({
+    message: "User identifier recorded",
+    name: nameReq.data,
+    uid: uid,
+  });
 });
 
 export default app;
