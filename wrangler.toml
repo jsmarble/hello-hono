@@ -1,4 +1,4 @@
-name = "hello-world"
+name = "hello-hono"
 compatibility_date = "2023-12-01"
 main = "src/index.ts"
 
