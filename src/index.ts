@@ -5,6 +5,7 @@ type Bindings = {
 import { Hono } from "hono";
 import { z } from "zod";
 import type { KVNamespace } from "@cloudflare/workers-types";
+import { verifyKey } from "@unkey/api";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -27,11 +28,11 @@ app.get("/hello", (c) => {
 });
 
 app.get("/hello/:name", async (c) => {
-  var name = null;
-  var uuid = guidSchema.safeParse(c.req.param("name"));
+  let name = null;
+  const uuid = guidSchema.safeParse(c.req.param("name"));
   if (uuid.success) {
-    var uid = uuid.data;
-    var n = await c.env.NAMES_KV.get(uid);
+    const uid = uuid.data;
+    const n = await c.env.NAMES_KV.get(uid);
     if (n === null) {
       return c.text(`I don't know who ${uid} is.`);
     }
@@ -39,7 +40,7 @@ app.get("/hello/:name", async (c) => {
   }
 
   if (name === null) {
-    var nameReq = nameSchema.safeParse(c.req.param("name"));
+    const nameReq = nameSchema.safeParse(c.req.param("name"));
     if (!nameReq.success) {
       return c.json(
         {
@@ -56,15 +57,15 @@ app.get("/hello/:name", async (c) => {
 });
 
 app.post("/codename/:name/:uuid", async (c) => {
-  var uid = null;
-  var uuid = guidSchema.safeParse(c.req.param("uuid"));
+  let uid = null;
+  const uuid = guidSchema.safeParse(c.req.param("uuid"));
   if (uuid.success) {
     uid = uuid.data;
   } else {
     uid = crypto.randomUUID();
   }
 
-  var nameReq = nameSchema.safeParse(c.req.param("name"));
+  const nameReq = nameSchema.safeParse(c.req.param("name"));
   if (!nameReq.success) {
     return c.json(
       {
