@@ -2,8 +2,10 @@ name = "hello-hono"
 compatibility_date = "2023-12-01"
 main = "src/index.ts"
 
-# [vars]
-# MY_VAR = "my-variable"
+[dev]
+ip = "127.0.0.1"
+port = 33343
+local_protocol = "http"
 
 [[kv_namespaces]]
 binding = "NAMES_KV"

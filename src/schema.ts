@@ -13,5 +13,5 @@ export const nameSchema = z
 export const profileSchema = z.object({
   name: nameSchema,
   email: z.string().email(),
-  id: guidSchema,
+  id: guidSchema.optional().default(() => guidSchema.parse(crypto.randomUUID())),
 });
