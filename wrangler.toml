@@ -2,8 +2,9 @@ name = "hello-hono"
 compatibility_date = "2023-12-01"
 main = "src/index.ts"
 
-# [vars]
-# MY_VAR = "my-variable"
+[vars]
+TURSO_AUTH_TOKEN = ""
+TURSO_DATABASE_URL = ""
 
 [[kv_namespaces]]
 binding = "NAMES_KV"

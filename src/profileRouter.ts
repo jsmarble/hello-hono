@@ -3,6 +3,17 @@ import { guidSchema, profileSchema } from "./schema";
 import { Bindings } from "./Bindings";
 import { Hono } from "hono";
 
+import { text, sqliteTable } from "drizzle-orm/sqlite-core";
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/libsql";
+import { createClient } from "@libsql/client/web";
+
+const profile = sqliteTable("profiles", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+});
+
 const profileRouter = new Hono<{ Bindings: Bindings }>();
 
 profileRouter.get("/:uuid", async (c) => {
@@ -46,14 +57,53 @@ profileRouter.get("/:uuid", async (c) => {
     );
   }
 
-  //TODO: get profile from D1 by uuid
-  let profile = {
-    name: "John Doe",
-    email: "jdoe@gmail.com",
-    id: uuid.data,
-  }
+  try {
+    const TURSO_DATABASE_URL = c.env.TURSO_DATABASE_URL;
+    const TURSO_AUTH_TOKEN = c.env.TURSO_AUTH_TOKEN;
 
-  return c.json(profile);
+    const turso = createClient({
+      url: TURSO_DATABASE_URL,
+      authToken: TURSO_AUTH_TOKEN,
+    });
+
+    const db = drizzle(turso);
+    const result = await db
+      .select()
+      .from(profile)
+      .where(eq(profile.id, uuid.data))
+      .limit(1)
+      .execute();
+
+    if (!result || result.length === 0) {
+      return c.json(
+        {
+          error: "Profile not found.",
+        },
+        404
+      );
+    }
+
+    const p = await profileSchema.safeParseAsync(result[0]);
+    if (!p.success) {
+      console.error(p.error.errors);
+      return c.json(
+        {
+          error: "Internal server error.",
+        },
+        500
+      );
+    }
+
+    return c.json(p.data);
+  } catch (e) {
+    console.error(e);
+    return c.json(
+      {
+        error: "Internal server error.",
+      },
+      500
+    );
+  }
 });
 
 profileRouter.post("/", async (c) => {
