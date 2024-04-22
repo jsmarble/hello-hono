@@ -137,18 +137,32 @@ profileRouter.post("/", async (c) => {
     );
   }
 
-  let profile = profileSchema.safeParse(await c.req.json());
-  if (!profile.success) {
+  let p = profileSchema.safeParse(await c.req.json());
+  if (!p.success) {
     return c.json(
       {
-        error: profile.error.errors[0].message,
+        error: p.error.errors[0].message,
       },
       400
     );
   }
 
   //TODO: Save profile to D1 by uuid
-  return c.text("Profile saved.");
+  const TURSO_URL = c.env.TURSO_URL;
+  const TURSO_TOKEN = c.env.TURSO_AUTH_TOKEN;
+
+  const turso = createClient({
+    url: TURSO_URL,
+    authToken: TURSO_TOKEN,
+  });
+
+  const db = drizzle(turso);
+  const result = await db
+    .insert(profile)
+    .values(p.data)
+    .execute();
+
+  return c.text(`Profile saved with ID ${p.data.id}.`);
 });
 
 export default profileRouter;
