@@ -5,7 +5,8 @@ import { Hono } from "hono";
 
 import { text, sqliteTable } from "drizzle-orm/sqlite-core";
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/libsql";
+import { drizzle as drizzle_d1 } from "drizzle-orm/d1";
+import { drizzle as drizzle_turso } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client/web";
 
 const profile = sqliteTable("profiles", {
@@ -17,7 +18,7 @@ const profile = sqliteTable("profiles", {
 const profileRouter = new Hono<{ Bindings: Bindings }>();
 
 profileRouter.get("/:uuid", async (c) => {
-   const uuid = guidSchema.safeParse(c.req.param("uuid"));
+  const uuid = guidSchema.safeParse(c.req.param("uuid"));
   if (!uuid.success) {
     return c.json(
       {
@@ -36,8 +37,9 @@ profileRouter.get("/:uuid", async (c) => {
       authToken: TURSO_TOKEN,
     });
 
-    const db = drizzle(turso);
-    const result = await db
+    let db_turso = drizzle_turso(turso);
+    let db_d1 = drizzle_d1(c.env.D1);
+    const result = await db_d1
       .select()
       .from(profile)
       .where(eq(profile.id, uuid.data))
@@ -117,22 +119,44 @@ profileRouter.post("/", async (c) => {
     );
   }
 
-  //TODO: Save profile to D1 by uuid
-  const TURSO_URL = c.env.TURSO_URL;
-  const TURSO_TOKEN = c.env.TURSO_AUTH_TOKEN;
+  try {
+    const TURSO_URL = c.env.TURSO_URL;
+    const TURSO_TOKEN = c.env.TURSO_AUTH_TOKEN;
 
-  const turso = createClient({
-    url: TURSO_URL,
-    authToken: TURSO_TOKEN,
-  });
+    const turso = createClient({
+      url: TURSO_URL,
+      authToken: TURSO_TOKEN,
+    });
 
-  const db = drizzle(turso);
-  const result = await db
-    .insert(profile)
-    .values(p.data)
-    .execute();
+    const db_turso = drizzle_turso(turso);
+    const db_d1 = drizzle_d1(c.env.D1);
+    const result_d1 = await db_d1.insert(profile).values(p.data).execute();
 
-  return c.text(`Profile saved with ID ${p.data.id}.`);
+    const result_turso = await db_turso
+      .insert(profile)
+      .values(p.data)
+      .execute();
+
+    if (!result_d1.success) {
+      console.error(result_d1.error);
+      return c.json(
+        {
+          error: "Internal server error.",
+        },
+        500
+      );
+    }
+
+    return c.text(`Profile saved with ID ${p.data.id}.`);
+  } catch (e) {
+    console.error(e);
+    return c.json(
+      {
+        error: "Internal server error.",
+      },
+      500
+    );
+  }
 });
 
 export default profileRouter;

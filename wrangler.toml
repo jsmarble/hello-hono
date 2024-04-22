@@ -15,10 +15,10 @@ id = "51abe569feaa4eee937e919811352d1a"
 # binding = "MY_BUCKET"
 # bucket_name = "my-bucket"
 
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "my-database"
-# database_id = ""
+[[d1_databases]]
+binding = "D1"
+database_name = "hello-hono"
+database_id = "c6211cc0-7d69-4bb1-a171-7cd5ef730f08"
 
 # [ai]
 # binding = "AI"
