@@ -4,7 +4,7 @@ main = "src/index.ts"
 
 [dev]
 ip = "127.0.0.1"
-port = 33367
+port = 33343
 local_protocol = "http"
 
 [[kv_namespaces]]

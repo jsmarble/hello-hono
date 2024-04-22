@@ -6,36 +6,6 @@ import { Hono } from "hono";
 const idRouter = new Hono<{ Bindings: Bindings }>();
 
 idRouter.post("/:name/:uuid", async (c) => {
-  //first validate the api key
-  const apiKey = c.req.header("Authorization")?.replace("Bearer ", "");
-  if (!apiKey) {
-    return c.json(
-      {
-        error: "API key is required via Authorization header",
-      },
-      400
-    );
-  }
-
-  const v = await verifyKey(apiKey);
-  if (v.error) {
-    return c.json(
-      {
-        error: "Internal server error",
-      },
-      500
-    );
-  }
-
-  if (!v.result.valid) {
-    return c.json(
-      {
-        error: "Invalid API key",
-      },
-      401
-    );
-  }
-
   let uid = null;
   const uuid = guidSchema.safeParse(c.req.param("uuid"));
   if (uuid.success) {

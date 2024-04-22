@@ -17,37 +17,7 @@ const profile = sqliteTable("profiles", {
 const profileRouter = new Hono<{ Bindings: Bindings }>();
 
 profileRouter.get("/:uuid", async (c) => {
-  //first validate the api key
-  const apiKey = c.req.header("Authorization")?.replace("Bearer ", "");
-  if (!apiKey) {
-    return c.json(
-      {
-        error: "API key is required via Authorization header",
-      },
-      400
-    );
-  }
-
-  const v = await verifyKey(apiKey);
-  if (v.error) {
-    return c.json(
-      {
-        error: "Internal server error",
-      },
-      500
-    );
-  }
-
-  if (!v.result.valid) {
-    return c.json(
-      {
-        error: "Invalid API key",
-      },
-      401
-    );
-  }
-
-  const uuid = guidSchema.safeParse(c.req.param("uuid"));
+   const uuid = guidSchema.safeParse(c.req.param("uuid"));
   if (!uuid.success) {
     return c.json(
       {
