@@ -1,9 +1,7 @@
 import { verifyKey } from "@unkey/api";
-import { Hono } from "hono";
+import { Hono, MiddlewareHandler } from "hono";
 
-const authMiddleware = new Hono<{}>();
-
-authMiddleware.use(async (c, next) => {
+export const authMiddleware = (): MiddlewareHandler => async (c, next) => {
   //first validate the api key
   const apiKey = c.req.header("Authorization")?.replace("Bearer ", "");
   if (!apiKey) {
@@ -35,6 +33,6 @@ authMiddleware.use(async (c, next) => {
   }
 
   await next();
-});
+};
 
 export default authMiddleware;
