@@ -2,9 +2,10 @@ name = "hello-hono"
 compatibility_date = "2023-12-01"
 main = "src/index.ts"
 
-[vars]
-TURSO_AUTH_TOKEN = ""
-TURSO_DATABASE_URL = ""
+[dev]
+ip = "127.0.0.1"
+port = 33367
+local_protocol = "http"
 
 [[kv_namespaces]]
 binding = "NAMES_KV"

@@ -58,12 +58,12 @@ profileRouter.get("/:uuid", async (c) => {
   }
 
   try {
-    const TURSO_DATABASE_URL = c.env.TURSO_DATABASE_URL;
-    const TURSO_AUTH_TOKEN = c.env.TURSO_AUTH_TOKEN;
+    const TURSO_URL = c.env.TURSO_URL;
+    const TURSO_TOKEN = c.env.TURSO_AUTH_TOKEN;
 
     const turso = createClient({
-      url: TURSO_DATABASE_URL,
-      authToken: TURSO_AUTH_TOKEN,
+      url: TURSO_URL,
+      authToken: TURSO_TOKEN,
     });
 
     const db = drizzle(turso);
