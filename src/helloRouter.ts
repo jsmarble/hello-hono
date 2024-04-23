@@ -10,7 +10,7 @@ helloRouter.get("/", (c) => {
 
 helloRouter.get("/:name", async (c) => {
   let name = null;
-  const uuid = guidSchema.safeParse(c.req.param("name"));
+  const uuid = await guidSchema.safeParseAsync(c.req.param("name"));
   if (uuid.success) {
     const uid = uuid.data;
     const n = await c.env.NAMES_KV.get(uid);
@@ -27,7 +27,7 @@ helloRouter.get("/:name", async (c) => {
   }
 
   if (name === null) {
-    const nameReq = nameSchema.safeParse(c.req.param("name"));
+    const nameReq = await nameSchema.safeParseAsync(c.req.param("name"));
     if (!nameReq.success) {
       return c.json(
         {

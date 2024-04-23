@@ -18,7 +18,7 @@ const profile = sqliteTable("profiles", {
 const profileRouter = new Hono<{ Bindings: Bindings }>();
 
 profileRouter.get("/:uuid", async (c) => {
-  const uuid = guidSchema.safeParse(c.req.param("uuid"));
+  const uuid = await guidSchema.safeParseAsync(c.req.param("uuid"));
   if (!uuid.success) {
     return c.json(
       {
