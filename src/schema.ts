@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const guidSchema = z.string().uuid();
+export const uuidSchema = z.string().uuid();
 
 export const nameSchema = z
   .string({
@@ -13,5 +13,5 @@ export const nameSchema = z
 export const profileSchema = z.object({
   name: nameSchema,
   email: z.string().email(),
-  id: guidSchema.optional().default(() => guidSchema.parse(crypto.randomUUID())),
+  id: uuidSchema.optional().default(() => uuidSchema.parse(crypto.randomUUID())),
 });

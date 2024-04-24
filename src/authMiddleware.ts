@@ -9,7 +9,7 @@ export const authMiddleware = (): MiddlewareHandler => async (c, next) => {
       {
         error: "API key is required via Authorization header",
       },
-      400
+      401
     );
   }
 

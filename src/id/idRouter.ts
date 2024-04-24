@@ -1,7 +1,7 @@
 import { verifyKey } from "@unkey/api";
-import { guidSchema, nameSchema } from "../schema";
+import { uuidSchema, nameSchema } from "../schema";
 import { Bindings } from "../Bindings";
-import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import { OpenAPIHono } from "@hono/zod-openapi";
 
 import getNewId from "./getNewId";
 

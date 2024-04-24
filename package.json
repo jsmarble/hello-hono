@@ -7,6 +7,7 @@
     "@hono/swagger-ui": "^0.2.1",
     "@hono/zod-openapi": "^0.11.0",
     "@libsql/client": "^0.6.0",
+    "@scalar/hono-api-reference": "^0.5.7",
     "@unkey/api": "^0.19.4",
     "drizzle-orm": "^0.30.9",
     "hono": "^4.2.6"
@@ -18,6 +19,9 @@
     "wrangler": "^3.47.0"
   },
   "trustedDependencies": [
-    "es5-ext"
+    "es5-ext",
+    "esbuild",
+    "vue-demi",
+    "workerd"
   ]
 }
