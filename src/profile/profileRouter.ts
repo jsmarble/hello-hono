@@ -11,7 +11,7 @@ export const profile = sqliteTable("profiles", {
   email: text("email").notNull(),
 });
 
-export const app = new OpenAPIHono<{ Bindings: Bindings }>();
+const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
 app.route("/", getByUUID);
 app.route("/", post);
